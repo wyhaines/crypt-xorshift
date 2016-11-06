@@ -5,6 +5,7 @@ module Crypt
 
     UINT32_C = 2**32
     UINT64_C = 2**64
+    UINT64_Cm = UINT64_C - 1
     UINT64_Cf = UINT64_C.to_f
 
     def initialize( seed = new_seed )
@@ -41,6 +42,17 @@ module Crypt
 
     def ==(v)
       self.class == v.class && @old_seed == v.seed
+    end
+
+    def bytes(size)
+      buffer = ""
+      ( size / 8 ).times { buffer << [rand(UINT64_Cm)].pack("L").unpack("aaaaaaaa").join }
+
+      if size % 8 != 0
+        buffer << [rand(UINT64_Cm)].pack("L").unpack("aaaaaaaa")[0..(size % 8 - 1)].join
+      end
+
+      buffer
     end
 
   end
